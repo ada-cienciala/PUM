@@ -10,50 +10,27 @@
     <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
 </body>
 <script>
-    var gradientOptions = [g2b, b2g]
-    var currGradient = 0
+    var fillColors = ["green", "blue"]
+    var currColor = 0
     var c = document.getElementById("canvas");
     var ctx = c.getContext("2d");
     init()
-    
-    var Anim = {
-        'duration': 1000,
-        'interval' : 10,
-        'currUnit' : 0.0
-    }
-
-    inId = setInterval(gradientOptions[currGradient%2], Anim.interval)
-    setInterval(() => {
-        currGradient++; 
-        Anim.currUnit = 0
-        clearInterval(inId); 
-        inId = setInterval(gradientOptions[currGradient%2], Anim.interval)
-    }, Anim.duration)
-
-    function g2b() {
-        ctx.beginPath();
-        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-        color = `rgb(0, ${255-(Anim.currUnit/100*255)}, ${(Anim.currUnit/100*255)})`
-        Anim.currUnit++
-        ctx.fillStyle = color
-        ctx.fill()
-        ctx.stroke();
-    }
-
-    function b2g() {
-        ctx.beginPath();
-        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-        color = `rgb(0, ${(Anim.currUnit/100*255)}, ${255-(Anim.currUnit/100*255)})`
-        Anim.currUnit++
-        ctx.fillStyle = color
-        ctx.fill()
-        ctx.stroke();
-    }
+    setInterval(changeCol, 1000)
 
     function init() {
         ctx.beginPath();
         ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgb(0, 255, 0)'
+        ctx.fillStyle = fillColors[currColor]
+        ctx.fill()
+        ctx.stroke();
+    }
+
+    function changeCol() {
+        console.log('lol')
+        ctx.beginPath();
+        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+        currColor++
+        ctx.fillStyle = fillColors[currColor%2]
         ctx.fill()
         ctx.stroke();
     }
