@@ -15,10 +15,8 @@
     var currColor = 0
     var c = document.getElementById("canvas");
     var ctx = c.getContext("2d");
-    ctx.beginPath();
     init()
     setInterval(changeCol, 1000)
-    changeCol()
 
     function init() {
         ctx.beginPath();
