@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+</body>
+<script>
+    var gradientOptions = [g2b, b2g]
+    var currGradient = 0
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    init()
+    
+    var Anim = {
+        'duration': 1000,
+        'interval' : 10,
+        'currUnit' : 0.0
+    }
+
+    var Circle = {
+        'currX': 95,
+        'currY': 50
+    }
+
+    var startingPoints = [50, 150]
+    var currStart = 0
+
+    inId = setInterval(() => {
+        ctx.clearRect(0, 0, c.width, c.height);
+        gradientOptions[currGradient%2]
+    }, Anim.interval)
+
+    setInterval(() => {
+        currGradient++; 
+        Anim.currUnit = 0
+        currStart++
+        clearInterval(inId); 
+        inId = setInterval(gradientOptions[currGradient%2], Anim.interval)
+    }, Anim.duration)
+
+    function g2b() {
+        ctx.beginPath();
+        ctx.arc(Circle.currX, Circle.currY, 40, 0, 2 * Math.PI);
+        color = `rgb(0, ${255-(Anim.currUnit/100*255)}, ${(Anim.currUnit/100*255)})`
+        Anim.currUnit++
+        if (currStart%2) {
+            Circle.currY++
+        } else {
+            Circle.currY--
+        }
+        ctx.fillStyle = color
+        ctx.fill()
+    }
+
+    function b2g() {
+        ctx.beginPath();
+        ctx.arc(Circle.currX, Circle.currY, 40, 0, 2 * Math.PI);
+        color = `rgb(0, ${(Anim.currUnit/100*255)}, ${255-(Anim.currUnit/100*255)})`
+        Anim.currUnit++
+        Circle.currY++
+        ctx.fillStyle = color
+        ctx.fill()
+    }
+
+    function init() {
+        ctx.beginPath();
+        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgb(0, 255, 0)'
+        ctx.fill()
+    }
+
+    </script>
+</html>
