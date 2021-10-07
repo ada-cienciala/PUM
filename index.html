@@ -8,5 +8,35 @@
 </head>
 <body>
     <p>Hello</p>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
 </body>
+<script>
+    var fillColors = ["green", "blue"]
+    var currColor = 0
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    ctx.beginPath();
+    init()
+    setInterval(changeCol, 1000)
+    changeCol()
+
+    function init() {
+        ctx.beginPath();
+        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+        ctx.fillStyle = fillColors[currColor]
+        ctx.fill()
+        ctx.stroke();
+    }
+
+    function changeCol() {
+        console.log('lol')
+        ctx.beginPath();
+        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+        currColor++
+        ctx.fillStyle = fillColors[currColor%2]
+        ctx.fill()
+        ctx.stroke();
+    }
+
+    </script>
 </html>
