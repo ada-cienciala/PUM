@@ -22,25 +22,30 @@
         'currUnit' : 0.0
     }
 
-    var Circle = {
-        'currX': 95,
-        'currY': 50
-    }
-
+    
     var startingPoints = [50, 150]
     var currStart = 0
 
-    inId = setInterval(() => {
-        ctx.clearRect(0, 0, c.width, c.height);
-        gradientOptions[currGradient%2]
+    var Circle = {
+        'currX': 95,
+        'currY': startingPoints[currStart%2]
+    }
+
+    let inId = setInterval(() => {
+        ctx.clearRect(0, 0, c.width, c.height)
+        gradientOptions[currGradient%2]()
     }, Anim.interval)
 
     setInterval(() => {
         currGradient++; 
         Anim.currUnit = 0
         currStart++
+        Circle.currY = startingPoints[currStart%2]
         clearInterval(inId); 
-        inId = setInterval(gradientOptions[currGradient%2], Anim.interval)
+        inId = setInterval(() => {
+            ctx.clearRect(0, 0, c.width, c.height)
+            gradientOptions[currGradient%2]()
+        }, Anim.interval)
     }, Anim.duration)
 
     function g2b() {
@@ -49,9 +54,9 @@
         color = `rgb(0, ${255-(Anim.currUnit/100*255)}, ${(Anim.currUnit/100*255)})`
         Anim.currUnit++
         if (currStart%2) {
-            Circle.currY++
-        } else {
             Circle.currY--
+        } else {
+            Circle.currY++
         }
         ctx.fillStyle = color
         ctx.fill()
@@ -62,7 +67,12 @@
         ctx.arc(Circle.currX, Circle.currY, 40, 0, 2 * Math.PI);
         color = `rgb(0, ${(Anim.currUnit/100*255)}, ${255-(Anim.currUnit/100*255)})`
         Anim.currUnit++
-        Circle.currY++
+        Anim.currUnit++
+        if (currStart%2) {
+            Circle.currY--
+        } else {
+            Circle.currY++
+        }
         ctx.fillStyle = color
         ctx.fill()
     }
