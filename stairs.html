@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
+</body>
+<script>
+    Coordinates = {
+        width: 800,
+        height: 600,
+        offset: 200
+    }
+    
+    Stairs = {
+        width: 100,
+        height: 100,
+    }
+
+    Ball = {
+        x: Coordinates.offset + (5 * Stairs.width) + (Stairs.width / 2),
+        y: Coordinates.height - (5 * Stairs.height) - (Stairs.height / 2),
+        mx: 0,
+        my: 0
+    }
+
+    var c = document.getElementById("canvas");
+    var ctx = c.getContext("2d");
+    drawStairs(5, 1000)
+    setTimeout(animateBall, 5*1000);
+
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(Ball.x, Ball.y, Stairs.height/2, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgb(0, 255, 0)'
+        ctx.fill()
+    }
+
+    changeDirection = false
+    timer = 0
+
+    function redrawBall() {
+        ctx.clearRect(0, 0, c.width, c.height)
+        drawStairs(5, 0)
+        timer += 1
+        if (timer % Stairs.width == 0) {
+            changeDirection = !changeDirection
+        }
+        Ball.x -= changeDirection ? 0 : 1
+        Ball.y += changeDirection ? 1 : 0
+        drawBall()
+        console.log(Ball.x, Ball.y)
+    }
+
+    function animateBall() {
+        drawBall(0, 0)
+        id = setInterval(redrawBall, 100)
+        setTimeout(()=>clearInterval(id), 1000 * 20)
+    }
+
+    function drawStairs(count, timeout) {
+        for (let i = 0; i < count; ++i) {
+            setTimeout(() => drawStep(i+1), i*timeout);
+        }
+    }
+
+    function drawStep(number) {
+        ctx.beginPath();
+        ctx.rect(Coordinates.offset + (number * Stairs.width), Coordinates.height - (Stairs.height * number), Stairs.width, Stairs.height * number);
+        ctx.fillStyle = 'black'
+        ctx.fill()
+    }
+    
+    </script>
+</html>
