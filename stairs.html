@@ -10,6 +10,12 @@
     <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
 </body>
 <script>
+
+    Anim = {
+        speed: 1,
+        finished: false
+    }
+
     Coordinates = {
         width: 800,
         height: 600,
@@ -17,6 +23,7 @@
     }
     
     Stairs = {
+        count: 5,
         width: 100,
         height: 100,
     }
@@ -30,40 +37,45 @@
 
     var c = document.getElementById("canvas");
     var ctx = c.getContext("2d");
-    drawStairs(5, 1000)
+
+    changeDirection = false
+    timer = 0
+    intervalId = null
+
+    drawStairs(1000)
     setTimeout(animateBall, 5*1000);
 
     function drawBall() {
         ctx.beginPath();
         ctx.arc(Ball.x, Ball.y, Stairs.height/2, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgb(0, 255, 0)'
+        ctx.fillStyle = 'rgb(0, 50, 255)'
         ctx.fill()
     }
 
-    changeDirection = false
-    timer = 0
-
     function redrawBall() {
-        ctx.clearRect(0, 0, c.width, c.height)
-        drawStairs(5, 0)
+        drawStairs(0)
         timer += 1
-        if (timer % Stairs.width == 0) {
+        if (timer % Stairs.width == 0 && !Anim.finished) {
             changeDirection = !changeDirection
         }
+        ctx.clearRect(Ball.x - Stairs.width/2, Ball.y - Stairs.height/2, Stairs.height, Stairs.width)
         Ball.x -= changeDirection ? 0 : 1
         Ball.y += changeDirection ? 1 : 0
         drawBall()
-        console.log(Ball.x, Ball.y)
+        if (Ball.y == Coordinates.height - (Stairs.height/2)) {
+            Anim.finished = true
+            changeDirection = false
+        }
+        if (Ball.x < 0 - (Stairs.width / 2)) clearInterval(intervalId)
     }
 
     function animateBall() {
         drawBall(0, 0)
-        id = setInterval(redrawBall, 100)
-        setTimeout(()=>clearInterval(id), 1000 * 20)
+        intervalId = setInterval(redrawBall, Anim.speed)
     }
 
-    function drawStairs(count, timeout) {
-        for (let i = 0; i < count; ++i) {
+    function drawStairs(timeout) {
+        for (let i = 0; i < Stairs.count; ++i) {
             setTimeout(() => drawStep(i+1), i*timeout);
         }
     }
