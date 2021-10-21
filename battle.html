@@ -10,72 +10,76 @@
     <canvas id="canvas" width="800" height="600" style="border:1px solid #000000;"></canvas>
 </body>
 <script>
-
-var canvas = {width:800, height:600 };
-var score = 0;
-
+    
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 
+var canvas = {
+    width:800, 
+    height:600 
+};
+
+var game = {
+    missiles: [],
+    enemies: [],
+    score: 0
+};
+
+const missileSpeed = 10
+const playerSpeed = 20
+
 var player = {
-	x:canvas.width/2,
-	y:canvas.height-100,
-	speed: 20,
+	x: canvas.width / 2,
+	y: canvas.height - 40,
+    height: 40,
+    width: 25,
+	speed: playerSpeed,
     shoot: function () {
-        console.log("Shot!")
-        missiles.push({
-            x: player.x,
+        game.missiles.push({
+            x: player.x + player.width/2,
             y: player.y,
-            speed: 10
+            speed: missileSpeed
         })
     }
 };
 
-var missiles = []
-var enemies = []
-
-////// Arrow keys //////
-
 function move(e) {
-	
 	if(e.keyCode == 37) { 
 		player.x -= player.speed;
+        if (player.x < 0) {
+            player.x = 0
+        }
 	}
 	if(e.keyCode == 39) {
 		player.x += player.speed;	
+        if (player.x > canvas.width - player.width) {
+            player.x = canvas.width - player.width
+        }
 	}
     if(e.keyCode == 32) {
 		player.shoot()	
 	}
-	
 	update();
-	
 }
 
 document.onkeydown = move;
 
-////// other functions //////
-
-
-//function to clear canvas
 function clearCanvas() {
-	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// Draw Player ship.
-function ship() {
+function drawPlayer() {
 	var x = player.x;
 	var y = player.y;
 	ctx.fillStyle = "black";
 
 	ctx.beginPath();
     ctx.moveTo(x,y);
-    ctx.rect(x, y, 20, 35)
+    ctx.rect(x, y, player.width, player.height)
     ctx.fill();
 }
 
-// Draw missile.
-function moveMissiles(missile) {
+function moveMissile(missile) {
     var x = missile.x;
 	var y = missile.y;
 	ctx.fillStyle = "red";
@@ -85,36 +89,32 @@ function moveMissiles(missile) {
     ctx.arc(x, y, 5, 0, 2 * Math.PI);
     ctx.fill();
 
-    checkIfShot(x, y)
+    checkAndShotEnemy(x, y)
 }
 
-// Draw enemy.
 function moveEnemy(enemy) {
     var x = enemy.x;
 	var y = enemy.y;
 	ctx.fillStyle = "green";
 
 	ctx.beginPath();
-    ctx.moveTo(x,y);
-    ctx.arc(x, y, e.radius, 0, 2 * Math.PI);
+    ctx.moveTo(x, y);
+    ctx.arc(x, y, enemy.radius, 0, 2 * Math.PI);
     ctx.fill();
 }
 
-function checkIfShot(x, y) {
+function checkAndShotEnemy(x, y) {
     let tokill = -1
-    for (let i = 0; i < enemies.length; ++i) {
-        let e = enemies[i]
+    for (let i = 0; i < game.enemies.length; ++i) {
+        let e = game.enemies[i]
         if ((x >= e.x - e.radius && x <= e.x + e.radius) && (y >= e.y - e.radius && y <= e.y + e.radius)) {
-            console.log("HIT")
             tokill = i
-            score += 1;
+            game.score += 1;
             break
         }
     }
-    if (tokill != -1) enemies.splice(tokill, 1)
+    if (tokill != -1) game.enemies.splice(tokill, 1)
 }
-
-// update
 
 setInterval (update, 50);
 setInterval (spawnEnemy, 2000);
@@ -126,25 +126,34 @@ function spawnEnemy() {
         speed: 2,
         radius: 20
     }
-    enemies.push(enemy)
+    game.enemies.push(enemy)
 }
 
 function showScore() {
     ctx.font = "30px Arial";
-    ctx.fillText("Score:" + score, 20, canvas.height - 20);
+    ctx.fillStyle = "black"
+    ctx.fillText("Score:" + game.score, 20, 50);
+}
+
+function drawMissiles() {
+    for (let m of game.missiles) {
+        m.y -= m.speed;
+        moveMissile(m)
+    }
+}
+
+function drawEnemies() {
+    for (let e of game.enemies) {
+        e.y += e.speed;
+        moveEnemy(e)
+    }
 }
 
 function update() {
 	clearCanvas();
-	ship();
-    for (m of missiles) {
-        m.y -= m.speed;
-        moveMissiles(m)
-    }
-    for (e of enemies) {
-        e.y += e.speed;
-        moveEnemy(e)
-    }
+	drawPlayer();
+    drawMissiles()
+    drawEnemies()
     showScore()
 }
     
