@@ -79,7 +79,6 @@ function moveMissiles(missile) {
     var x = missile.x;
 	var y = missile.y;
 	ctx.fillStyle = "red";
-    console.log(x, y)
 
 	ctx.beginPath();
     ctx.moveTo(x,y);
@@ -89,22 +88,49 @@ function moveMissiles(missile) {
     checkIfShot(x, y)
 }
 
-// function checkIfShot(x, y) {
-//     for (e of enemies)
-// }
+// Draw enemy.
+function moveEnemy(enemy) {
+    var x = enemy.x;
+	var y = enemy.y;
+	ctx.fillStyle = "green";
+
+	ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.arc(x, y, e.radius, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+function checkIfShot(x, y) {
+    let tokill = -1
+    for (let i = 0; i < enemies.length; ++i) {
+        let e = enemies[i]
+        if ((x >= e.x - e.radius && x <= e.x + e.radius) && (y >= e.y - e.radius && y <= e.y + e.radius)) {
+            console.log("HIT")
+            tokill = i
+            score += 1;
+            break
+        }
+    }
+    if (tokill != -1) enemies.splice(tokill, 1)
+}
 
 // update
 
 setInterval (update, 50);
-setInterval (spawnEnemy, 500);
+setInterval (spawnEnemy, 2000);
 
 function spawnEnemy() {
     enemy = {
-        x: player.x,
+        x: Math.floor(Math.random() * (canvas.width-20 - 20 + 1)) + 20,
         y: 0,
-        speed: 30
+        speed: 2,
+        radius: 20
     }
     enemies.push(enemy)
+}
+
+function showScore() {
+    
 }
 
 function update() {
@@ -114,6 +140,11 @@ function update() {
         m.y -= m.speed;
         moveMissiles(m)
     }
+    for (e of enemies) {
+        e.y += e.speed;
+        moveEnemy(e)
+    }
+    showScore()
 }
     
 </script>
